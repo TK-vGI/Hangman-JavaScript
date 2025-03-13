@@ -1,0 +1,80 @@
+const input = require('sync-input');
+
+const words = ['java', 'python', 'swift', 'javascript'];
+const guessWord = randomGuessWord(words);
+let guessArr = transformWord(guessWord);
+
+function randomGuessWord(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+function transformWord(string) {
+    return Array.from(string);
+}
+
+function changeDisplay(arr, char) {
+    if (display.includes(char)) {
+        return;
+    }
+    for (let i = 0; i < arr.length; i++) {
+        if (guessArr[i] === char) {
+            arr.splice(i, 1, char);
+        }
+    }
+}
+
+function checkInput(string) {
+    if (string.length !== 1) {
+        console.log('Please, input a single letter.');
+        return false
+    }       // is a single letter
+    if (!/[a-z]/.test(string)) {
+        console.log('Please, enter a lowercase letter from the English alphabet.')
+        return false
+    }       // is a lowercase alphabetical letter
+    if (attemptedLetters.includes(string) || display.includes(string)) {
+        console.log('You\'ve already guessed this letter.')
+        return false
+    }       // is not a repeated guess
+    attemptedLetters.push(string);      // if not repeated, put new into an array
+    return true
+}
+
+function checkLetter(arr, char) {
+    if (display.includes(char)) {
+        console.log('No improvements.');
+    } else if (arr.includes(char)) {
+        changeDisplay(display, char);
+    } else {
+        attempts = attempts - 1;
+        console.log('That letter doesn\'t appear in the word.');
+    }
+}
+
+console.log('H A N G M A N');
+
+let display = Array.from('-'.repeat(guessArr.length));
+let attempts = 8;
+const attemptedLetters = [];
+while (attempts > 0) {
+    console.log();
+    console.log(display.join(''));
+
+    let userLetter = input('Input a letter: ');
+    userLetter = userLetter.trim();
+    if (!checkInput(userLetter)) continue;
+
+    checkLetter(guessArr, userLetter);
+
+    let victory = !display.includes('-')
+    if (victory) {
+        console.log(`You guessed the word ${guessWord}!`);
+        console.log('You survived!');
+        break;
+    }
+    if (attempts === 0 && victory === false) {
+        console.log();
+        console.log('You lost!')
+        break;
+    }
+}
